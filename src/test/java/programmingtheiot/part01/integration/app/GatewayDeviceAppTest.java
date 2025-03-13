@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import programmingtheiot.gda.app.GatewayDeviceApp;
 
+
 /**
  * This test case class contains very basic integration tests for
  * GatewayDeviceApp. It should not be considered complete,

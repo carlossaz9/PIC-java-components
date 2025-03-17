@@ -28,6 +28,9 @@ public class SystemStateData extends BaseIotData implements Serializable
 	
 	
 	// private var's
+	private int command =ConfigConst.DEFAULT_COMMAND;
+	private List<SystemPerformanceData>sysPerfDataList =null;
+	private List<SensorData>sensorDataList =null;
 	
     
     
@@ -36,6 +39,10 @@ public class SystemStateData extends BaseIotData implements Serializable
 	public SystemStateData()
 	{
 		super();
+		super.setName(ConfigConst.SYS_STATE_DATA);
+
+		this.sysPerfDataList =new ArrayList<>();
+		this.sensorDataList  =new ArrayList<>();
 	}
 	
 	
@@ -43,31 +50,40 @@ public class SystemStateData extends BaseIotData implements Serializable
 	
 	public boolean addSensorData(SensorData data)
 	{
-		return false;
+		if (data != null) {
+            this.sensorDataList.add(data);
+            return true;
+        }
+        return false;
 	}
 	
 	public boolean addSystemPerformanceData(SystemPerformanceData data)
 	{
-		return false;
+		if (data != null) {
+            this.sysPerfDataList.add(data);
+            return true;
+        }
+        return false;
 	}
 	
 	public int getCommand()
 	{
-		return 0;
+		return this.command;
 	}
 	
 	public List<SensorData> getSensorDataList()
 	{
-		return null;
+		return this.sensorDataList;
 	}
 	
 	public List<SystemPerformanceData> getSystemPerformanceDataList()
 	{
-		return null;
+		return this.sysPerfDataList;
 	}
 	
 	public void setCommand(int actionCmd)
 	{
+		this.command = actionCmd;
 	}
 	
 	/**
@@ -76,6 +92,7 @@ public class SystemStateData extends BaseIotData implements Serializable
 	 * 
 	 * @return String The string representing this instance, returned in CSV 'key=value' format.
 	 */
+	@Override
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder(super.toString());
@@ -94,8 +111,15 @@ public class SystemStateData extends BaseIotData implements Serializable
 	/* (non-Javadoc)
 	 * @see programmingtheiot.data.BaseIotData#handleUpdateData(programmingtheiot.data.BaseIotData)
 	 */
+	@Override
 	protected void handleUpdateData(BaseIotData data)
 	{
+		if (data instanceof SystemStateData) {
+            SystemStateData ssd = (SystemStateData) data;
+            this.setCommand(ssd.getCommand());
+            this.sensorDataList = ssd.getSensorDataList();
+            this.sysPerfDataList = ssd.getSystemPerformanceDataList();
+        }
 	}
 	
 }

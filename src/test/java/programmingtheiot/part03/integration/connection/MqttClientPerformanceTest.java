@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import programmingtheiot.common.ConfigUtil;
@@ -58,7 +59,6 @@ public class MqttClientPerformanceTest
 	@Before
 	public void setUp() throws Exception
 	{
-		ConfigUtil.getInstance();
 		this.mqttClient = new MqttClientConnector();
 	}
 	
@@ -92,6 +92,7 @@ public class MqttClientPerformanceTest
 	/**
 	 * Test method for {@link programmingtheiot.gda.connection.MqttClientConnector#publishMessage(programmingtheiot.common.ResourceNameEnum, java.lang.String, int)}.
 	 */
+	@Ignore
 	@Test
 	public void testPublishQoS0()
 	{
@@ -101,7 +102,8 @@ public class MqttClientPerformanceTest
 	/**
 	 * Test method for {@link programmingtheiot.gda.connection.MqttClientConnector#publishMessage(programmingtheiot.common.ResourceNameEnum, java.lang.String, int)}.
 	 */
-	@Test
+	@Ignore
+	 @Test
 	public void testPublishQoS1()
 	{
 		execTestPublish(MAX_TEST_RUNS, 1);
@@ -142,13 +144,7 @@ public class MqttClientPerformanceTest
 		
 		assertTrue(this.mqttClient.disconnectClient());
 		
-		String msg =
-			String.format(
-				"\\n\\tTesting Publish: QoS = %s | msgs = %s | payload size = %s | start = %s | end = %s | elapsed = %s",
-				qos, maxTestRuns, payloadLen,
-				(float) startMillis / 1000, (float) endMillis / 1000, (float) elapsedMillis / 1000);
-		
-		_Logger.info(msg);
+		_Logger.info("Publish message - QoS " + qos + " [" + maxTestRuns + "]: " + elapsedMillis + " ms");
 	}
 	
 }

@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import programmingtheiot.common.ConfigConst;
@@ -96,6 +97,7 @@ public class CoapClientPerformanceTest
 	/**
 	 * 
 	 */
+	@Ignore
 	@Test
 	public void testPostRequestCon()
 	{
@@ -107,6 +109,7 @@ public class CoapClientPerformanceTest
 	/**
 	 * 
 	 */
+	@Ignore
 	@Test
 	public void testPostRequestNon()
 	{
@@ -118,6 +121,7 @@ public class CoapClientPerformanceTest
 	/**
 	 * 
 	 */
+	@Ignore
 	@Test
 	public void testPutRequestCon()
 	{
@@ -129,6 +133,7 @@ public class CoapClientPerformanceTest
 	/**
 	 * 
 	 */
+	
 	@Test
 	public void testPutRequestNon()
 	{

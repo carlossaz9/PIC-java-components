@@ -27,6 +27,8 @@ public enum ResourceNameEnum
 		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, ConfigConst.MEDIA_MSG, false, false),
 	CDA_SENSOR_MSG_RESOURCE(
 		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, ConfigConst.SENSOR_MSG, false, false),
+	CDA_GAS_SENSOR_MSG_RESOURCE(
+		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, ConfigConst.GAS_SENSOR_MSG, false, false),
 	CDA_ACTUATOR_CMD_RESOURCE(
 		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, ConfigConst.ACTUATOR_CMD, false, true),
 	CDA_ACTUATOR_RESPONSE_RESOURCE(
@@ -39,6 +41,11 @@ public enum ResourceNameEnum
 		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, ConfigConst.RESOURCE_REGISTRATION_REQUEST, false, false),
 	CDA_SYSTEM_PERF_MSG_RESOURCE(
 		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, ConfigConst.SYSTEM_PERF_MSG, false, false),
+	
+	CDA_FAN_ACTUATOR_CMD_RESOURCE(
+		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, "FanActuatorCmd", false, true),
+	CDA_FAN_ACTUATOR_RESPONSE_RESOURCE(
+		ConfigConst.PRODUCT_NAME, ConfigConst.CONSTRAINED_DEVICE, "FanActuatorResponse", false, false),
 	
 	GDA_UPDATE_NOTIFICATIONS_RESOURCE(
 		ConfigConst.PRODUCT_NAME, ConfigConst.GATEWAY_DEVICE, ConfigConst.UPDATE_NOTIFICATIONS_MSG, false, true),
@@ -193,5 +200,4 @@ public enum ResourceNameEnum
 	{
 		return this.isObservable;
 	}
-	
 }

@@ -123,10 +123,12 @@ public class ConfigConst
 	public static final int    ENV_DEVICE_TYPE           = 1000;
 	public static final int    HVAC_ACTUATOR_TYPE        = 1001;
 	public static final int    HUMIDIFIER_ACTUATOR_TYPE  = 1002;
+	public static final int    FAN_ACTUATOR_TYPE         = 1003;
 	
 	public static final int    HUMIDITY_SENSOR_TYPE      = 1010;
 	public static final int    PRESSURE_SENSOR_TYPE      = 1012;
 	public static final int    TEMP_SENSOR_TYPE          = 1013;
+	public static final int    GAS_SENSOR_TYPE           = 1014;
 	
 	public static final int    DISPLAY_DEVICE_TYPE       = 2000;
 	public static final int    LED_ACTUATOR_TYPE         = 2001;
@@ -148,6 +150,8 @@ public class ConfigConst
 	public static final String LED_ACTUATOR_NAME        = "LedActuator";
 	public static final String HUMIDIFIER_ACTUATOR_NAME = "HumidifierActuator";
 	public static final String HVAC_ACTUATOR_NAME       = "HvacActuator";
+	public static final String GAS_SENSOR_NAME          = "GasSensor";
+	public static final String FAN_ACTUATOR_NAME         = "FanActuator";
 
 	// this is included here for testing purposes only
 	public static final String TEMP_SENSOR_NAME = "TempSensor";
@@ -163,6 +167,7 @@ public class ConfigConst
 	public static final String MGMT_STATUS_MSG = "MgmtStatusMsg";
 	public static final String MGMT_STATUS_CMD = "MgmtStatusCmd";
 	public static final String SYSTEM_PERF_MSG = "SystemPerfMsg";
+	public static final String GAS_SENSOR_MSG   = "GasSensorMsg";
 	
 	public static final String UPDATE_NOTIFICATIONS_MSG      = "UpdateMsg";
 	public static final String RESOURCE_REGISTRATION_REQUEST = "ResourceRegRequest";
@@ -171,7 +176,7 @@ public class ConfigConst
 	 * Configuration Sections, Keys and Defaults
 	 */
 	
-	public static final String DEFAULT_CONFIG_FILE_NAME      = "/home/carlos/programmingtheiot/java-components/config/PiotConfig.props";
+	public static final String DEFAULT_CONFIG_FILE_NAME      = "./config/PiotConfig.props";
 	public static final String DEFAULT_CRED_FILE_NAME        = "./cred/PiotCred.props";
 	public static final String DEFAULT_KEY_STORE_FILE_NAME   = "./cred/KeyStore.jks";
 	public static final String DEFAULT_TRUST_STORE_FILE_NAME = "./cred/TrustStore.jks";
@@ -294,5 +299,8 @@ public class ConfigConst
 	private ConfigConst()
 	{
 	}
+	
+	// Añadir el recurso de tópico para GasSensor
+	public static final String CDA_GAS_SENSOR_MSG_RESOURCE = PRODUCT_NAME + "/" + CONSTRAINED_DEVICE + "/" + GAS_SENSOR_MSG;
 	
 }

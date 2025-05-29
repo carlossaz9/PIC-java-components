@@ -107,33 +107,26 @@
 	 {
 		 try {
 			 if (this.mqttClient == null) {
-				 // NOTE: MQTT client updated to use async client vs sync client
-					 this.mqttClient = new MqttAsyncClient(this.brokerAddr, this.clientID, this.persistence);
-		 //			this.mqttClient = new MqttClient(this.brokerAddr, this.clientID, this.persistence);
- 
+				 this.mqttClient = new MqttAsyncClient(this.brokerAddr, this.clientID, this.persistence);
 				 this.mqttClient.setCallback(this);
 			 }
  
 			 if (! this.mqttClient.isConnected()) {
 				 _Logger.info("MQTT client connecting to broker: " + this.brokerAddr);
- 
-				 this.mqttClient.connect(this.connOpts);
- 
-				 // NOTE: When using the async client, returning 'true' here doesn't mean
-				 // the client is actually connected - yet. Use the connectComplete() callback
-				 // to determine result of connectClient().
+				 
+				 // Esperar a que la conexión se complete
+				 this.mqttClient.connect(this.connOpts).waitForCompletion(5000);
+				 
 				 return true;
 			 } else {
 				 _Logger.warning("MQTT client already connected to broker: " + this.brokerAddr);
 			 }
 		 } catch (MqttException e) {
-			 // TODO: handle this exception
- 
 			 _Logger.log(Level.SEVERE, "Failed to connect MQTT client to broker: " + this.brokerAddr, e);
 		 }
  
 		 return false;
- }
+	 }
  
 	 @Override
 	 public boolean disconnectClient()
@@ -191,15 +184,20 @@
 	 
 		 if (qos < 0 || qos > 2) {
 			 _Logger.warning("Invalid QoS. Using default. QoS requested: " + qos);
-			 // TODO: retrieve default QoS from config file
 			 qos = ConfigConst.DEFAULT_QOS;
 		 }
 	 
 		 try {
+			 // Verificar si el cliente está conectado
+			 if (!this.mqttClient.isConnected()) {
+				 _Logger.warning("MQTT client not connected. Attempting to reconnect...");
+				 connectClient();
+			 }
+ 
 			 MqttMessage mqttMsg = new MqttMessage();
 			 mqttMsg.setQos(qos);
 			 mqttMsg.setPayload(payload);
-	 
+ 
 			 this.mqttClient.publish(topicName, mqttMsg);
 			 return true;
 		 } catch (Exception e) {
@@ -327,7 +325,9 @@
 			 this.subscribeToTopic(ResourceNameEnum.CDA_ACTUATOR_RESPONSE_RESOURCE, qos);
 			 this.subscribeToTopic(ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, qos);
 			 this.subscribeToTopic(ResourceNameEnum.CDA_SYSTEM_PERF_MSG_RESOURCE, qos);
- 
+			 this.subscribeToTopic(ResourceNameEnum.CDA_GAS_SENSOR_MSG_RESOURCE, qos);
+			 this.subscribeToTopic(ResourceNameEnum.CDA_FAN_ACTUATOR_CMD_RESOURCE, qos);
+			 this.subscribeToTopic(ResourceNameEnum.CDA_FAN_ACTUATOR_RESPONSE_RESOURCE, qos);
 			 // IMPORTANT NOTE: You'll have to parse each message type in the callback method
 			 // `public void messageArrived(String topic, MqttMessage msg) throws Exception`
 		 } 
@@ -360,8 +360,26 @@
 	 @Override
 	 public void messageArrived(String topic, MqttMessage msg) throws Exception
 	 {
-		 // TODO: Logging level may need to be adjusted to reduce output in log file / console
 		 _Logger.info("MQTT message arrived on topic: '" + topic + "'");
+		 if (this.dataMsgListener != null && topic != null && msg != null) {
+			 if (topic.equals(ResourceNameEnum.CDA_GAS_SENSOR_MSG_RESOURCE.getResourceName())) {
+				 String jsonData = new String(msg.getPayload());
+				 programmingtheiot.data.SensorData gasData = programmingtheiot.data.DataUtil.getInstance().jsonToSensorData(jsonData);
+				 this.dataMsgListener.handleSensorMessage(ResourceNameEnum.CDA_GAS_SENSOR_MSG_RESOURCE, gasData);
+			 } else if (topic.equals(ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE.getResourceName())) {
+				 String jsonData = new String(msg.getPayload());
+				 programmingtheiot.data.SensorData sensorData = programmingtheiot.data.DataUtil.getInstance().jsonToSensorData(jsonData);
+				 this.dataMsgListener.handleSensorMessage(ResourceNameEnum.CDA_SENSOR_MSG_RESOURCE, sensorData);
+			 } else if (topic.equals(ResourceNameEnum.CDA_FAN_ACTUATOR_CMD_RESOURCE.getResourceName())) {
+				 String jsonData = new String(msg.getPayload());
+				 programmingtheiot.data.ActuatorData fanCmd = programmingtheiot.data.DataUtil.getInstance().jsonToActuatorData(jsonData);
+				 this.dataMsgListener.handleActuatorCommandRequest(ResourceNameEnum.CDA_FAN_ACTUATOR_CMD_RESOURCE, fanCmd);
+			 } else if (topic.equals(ResourceNameEnum.CDA_FAN_ACTUATOR_RESPONSE_RESOURCE.getResourceName())) {
+				 String jsonData = new String(msg.getPayload());
+				 programmingtheiot.data.ActuatorData fanResp = programmingtheiot.data.DataUtil.getInstance().jsonToActuatorData(jsonData);
+				 this.dataMsgListener.handleActuatorCommandResponse(ResourceNameEnum.CDA_FAN_ACTUATOR_RESPONSE_RESOURCE, fanResp);
+			 }
+		 }
 	 }
  
 	 

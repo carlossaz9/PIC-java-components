@@ -1,13 +1,4 @@
-/**
- * 
- * This class is part of the Programming the Internet of Things
- * project, and is available via the MIT License, which can be
- * found in the LICENSE file at the top level of this repository.
- * 
- * Copyright (c) 2020 by Andrew D. King
- */ 
-
- package programmingtheiot.part03.integration.connection;
+package programmingtheiot.part03.integration.connection;
 
  import static org.junit.Assert.*;
  
@@ -24,14 +15,7 @@
  import programmingtheiot.data.*;
  import programmingtheiot.gda.connection.*;
  
- /**
-  * This test case class contains very basic integration tests for
-  * MqttClientControlPacketTest. It should not be considered complete,
-  * but serve as a starting point for the student implementing
-  * additional functionality within their Programming the IoT
-  * environment.
-  *
-  */
+
  public class MqttClientControlPacketTest
  {
 	 // static
@@ -63,50 +47,64 @@
 	 @Test
 	 public void testConnectAndDisconnect()
 	 {
-		 // Connect to the broker to generate CONNECT and CONNACK packets
 		 assertTrue(this.mqttClient.connectClient());
- 
-		 // Disconnect from the broker to generate DISCONNECT packet
-		 assertTrue(this.mqttClient.disconnectClient());
+ 		 assertTrue(this.mqttClient.disconnectClient());
 	 }
 	 
 	 @Test
 	 public void testServerPing()
 	 {
-		 // Connect to the broker
 		 assertTrue(this.mqttClient.connectClient());
  
-		 // Wait for the keep-alive interval to generate PINGREQ and PINGRESP packets
 		 try {
-			 Thread.sleep(5000); // Adjust this based on the keep-alive interval
+			 Thread.sleep(5000);
 		 } catch (InterruptedException e) {
 			 _Logger.warning("Interrupted while waiting for PINGREQ and PINGRESP packets.");
 		 }
- 
-		 // Disconnect from the broker
 		 assertTrue(this.mqttClient.disconnectClient());
+	 }
+	 
+	 @Test
+	 public void testServerPingAlternative() {
+		 boolean connected = this.mqttClient.connectClient();
+		 assertTrue("MQTT client should connect", connected);
+		 long start = System.currentTimeMillis();
+		 long waitTime = 5000L;
+		 while (System.currentTimeMillis() - start < waitTime) {
+			 try {
+				 Thread.sleep(1000);
+			 } catch (InterruptedException e) {
+				 _Logger.warning("Sleep interrupted during ping wait loop.");
+			 }
+		 }
+		 boolean disconnected = this.mqttClient.disconnectClient();
+		 assertTrue("MQTT client should disconnect", disconnected);
 	 }
 	 
 	 @Test
 	 public void testPubSub()
 	 {
-		 // Connect to the broker
 		 assertTrue(this.mqttClient.connectClient());
- 
-		 // Subscribe to a topic to generate SUBSCRIBE and SUBACK packets
-		 assertTrue(this.mqttClient.subscribeToTopic(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, 1));
- 
-		 // Publish a message with QoS 1 to generate PUBLISH and PUBACK packets
-		 assertTrue(this.mqttClient.publishMessage(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, "Test message QoS 1", 1));
- 
-		 // Publish a message with QoS 2 to generate PUBLISH, PUBREC, PUBREL, and PUBCOMP packets
-		 assertTrue(this.mqttClient.publishMessage(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, "Test message QoS 2", 2));
- 
-		 // Unsubscribe from the topic to generate UNSUBSCRIBE and UNSUBACK packets
-		 assertTrue(this.mqttClient.unsubscribeFromTopic(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE));
- 
-		 // Disconnect from the broker
-		 assertTrue(this.mqttClient.disconnectClient());
+ 		 assertTrue(this.mqttClient.subscribeToTopic(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, 1));
+ 		 assertTrue(this.mqttClient.publishMessage(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, "Test message QoS 1", 1));
+ 		 assertTrue(this.mqttClient.publishMessage(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, "Test message QoS 2", 2));
+ 		 assertTrue(this.mqttClient.unsubscribeFromTopic(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE));
+ 		 assertTrue(this.mqttClient.disconnectClient());
+	 }
+	 
+	 @Test
+	 public void testPubSubAlternative() {
+		 assertTrue("Should connect to MQTT broker", this.mqttClient.connectClient());
+		 boolean subscribed = this.mqttClient.subscribeToTopic(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, 1);
+		 assertTrue("Should subscribe to topic", subscribed);
+		 boolean pub1 = this.mqttClient.publishMessage(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, "Alt test message QoS 1", 1);
+		 boolean pub2 = this.mqttClient.publishMessage(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE, "Alt test message QoS 2", 2);
+		 assertTrue("Should publish message with QoS 1", pub1);
+		 assertTrue("Should publish message with QoS 2", pub2);
+		 boolean unsub = this.mqttClient.unsubscribeFromTopic(ResourceNameEnum.GDA_MGMT_STATUS_MSG_RESOURCE);
+		 assertTrue("Should unsubscribe from topic", unsub);
+		 boolean disconnected = this.mqttClient.disconnectClient();
+		 assertTrue("Should disconnect from MQTT broker", disconnected);
 	 }
 	 
  }
